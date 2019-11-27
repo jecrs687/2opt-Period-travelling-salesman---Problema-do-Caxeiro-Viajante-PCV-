@@ -8,8 +8,9 @@ Write your code in this editor and press "Run" button to compile and execute it.
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <String.h>
 #define VERT 6
-
+#define MAX 10
 struct graph {
    int V; 
    int A; 
@@ -111,6 +112,7 @@ int verticeVizinho(Graph x, int i,int anterior){
 			   	return j;
 			}
 		}
+		return -1;
 }
 
 void mostrarGrafo(Graph x){
@@ -136,7 +138,7 @@ void op2(Graph x){
 	Graph aux;
 	aux=x;
 
-	 do{
+	 do{		  
 	 	proximo = verticeVizinho(x,i, anterior);
 		if(i>proximo){
 			x->adj[i][proximo]=0;
@@ -148,6 +150,7 @@ void op2(Graph x){
 		  vizinho = proximo;
 		  anterior = proximo;
 		  proximo = j;
+		  
 	 	for(j=verticeVizinho(x,proximo,anterior);y!=proximo && i!=verticeVizinho(x,proximo,anterior) ;j=verticeVizinho(x,proximo,anterior)){
 		 	 printf("trocando  %d:%d por %d:%d anterior =%d \n", i,vizinho,j,proximo,anterior );
 			  if(proximo>j){
@@ -165,9 +168,10 @@ void op2(Graph x){
 			  }else{
 				  x->adj[j][vizinho]=1;
 			  }
+	
 			  printf("soma anterior %f", soma);
 			  if(soma>somar(x)){
-			  	printf("soma anterior %f", soma);
+			  	printf("valor será reduzido %f", soma);
 				  soma = somar(x);
 			  }else{
   		 	 if(proximo>j){
@@ -191,7 +195,38 @@ void op2(Graph x){
 				x->adj[vizinho][i]=1;
 		  	  }
 			  }
-			  //mostrarGrafo(x);
+			  
+			  mostrarGrafo(x);
+			  anterior = proximo;
+			  proximo = j;
+		 }
+		 
+		 anterior = i;
+		 i = vizinho;
+	 }while(verticeVizinho(x,verticeVizinho(x,i,anterior),i)!=y);}
+	 	
+	 	
+void navegar(Graph x){
+	int i,j;
+	int anterior=-1;
+	int proximo=0;
+	int vizinho;
+	int y = 0;
+	i=y;
+	j=y;
+	double soma=somar(x);
+	Graph aux;
+	aux=x;
+
+	 do{
+	 	proximo = verticeVizinho(x,i, anterior);
+		  anterior = i;
+		  j=verticeVizinho(x,proximo,anterior);
+		  vizinho = proximo;
+		  anterior = proximo;
+		  proximo = j;
+	 	for(j=verticeVizinho(x,proximo,anterior);y!=proximo && i!=verticeVizinho(x,proximo,anterior) ;j=verticeVizinho(x,proximo,anterior)){
+		 	 printf("navegando de  %d:%d para %d:%d anterior =%d \n", i,vizinho,j,proximo,anterior );
 			  anterior = proximo;
 			  proximo = j;
 			  
@@ -199,9 +234,6 @@ void op2(Graph x){
 		 anterior = i;
 		 i = vizinho;
 	 }while(verticeVizinho(x,i,anterior)!=y);}
-	 	
-	 	
-	 	
 	 	
 	 	
 	 	
@@ -295,16 +327,50 @@ void vizinhoMaisProximo(Graph x){
 	  		printf("\n\n");	
 		}
 	}
+void createTxt(char v1[][MAX], char v2[][MAX], double w[], int size){
+	FILE *fp;
+	fp = fopen("example.txt", "w");
+	char buffer[2*MAX];
+	int i;
+	for(i=0; i < size;i++){
+			strcpy(buffer, v1[i]);
+			strcat(buffer, v2[i]);
+       		fprintf (fp, "%s %s %s %f\n", v1[i], v2[i], buffer, w[i]);
+   	}
+	fclose(fp);
+}
+
+void gerarArquivo(Graph x){
+	double vetor[VERT];
+	char vetor1[VERT][MAX];
+	char vetor2[VERT][MAX];
+	int i,j;
+	int k=0;
+	for(i=0; i<VERT;i++)
+	for(j=i+1; j<VERT;j++){
+		if(x->adj[j][i]==1){
+			printf("nome do vertices %d:", i);
+			scanf("%s", vetor1[k]);
+			printf("nome do vertices %d:", j);
+			scanf("%s", vetor2[k]);
+			vetor[k]=x->adj[i][j];
+			k++;
+		}
+	}
+		createTxt(vetor1, vetor2, vetor, x->V);
+
+}
 
 int main()
 {	
-	
 	Graph grafo = GRAPHinit(VERT);
 
 	inserirBack(grafo);
 		
 	vizinhoMaisProximo(grafo);
 	op2(grafo);
+	navegar(grafo);
+	gerarArquivo(grafo);
 	int i;
 	for (i=0;i<VERT;i++){
 		free(grafo->adj[i]);
@@ -312,4 +378,3 @@ int main()
     free(grafo->adj);
 	return 0;
 }
-
