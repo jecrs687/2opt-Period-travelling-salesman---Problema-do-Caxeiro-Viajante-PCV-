@@ -9,9 +9,9 @@ Write your code in this editor and press "Run" button to compile and execute it.
 #include <stdio.h>
 #include <stdlib.h>
 #include <String.h>
-#define VERT 6
-#define MAX 10
-#define MAXCHAR 1000
+#define VERT 22
+#define MAX 50
+#define MAXCHAR 1500
 struct graph {
    int V; 
    int A; 
@@ -29,7 +29,6 @@ static double **MATRIXint( int r, int c, int val) {
    for ( i = 0; i < r; ++i)
       for ( j = 0; j < c; ++j){
 	  m[i][j]=0;
-
 	  }
       	
    return m;
@@ -81,7 +80,7 @@ double somar(Graph x){
 			soma = soma + x->adj[i][j];
 		}
 	}
-		printf("\n%f\n\n", soma);
+		printf("\nsoma atual : %f\n\n", soma);
 	return soma;
 }
 int verticeVizinho(Graph x, int i,int anterior){
@@ -103,18 +102,16 @@ int verticeVizinho(Graph x, int i,int anterior){
 
 void mostrarGrafo(Graph x){
 	int v, k;
-	printf("__________________________________________________________________________________________\n");
 	 for(v=0; v<VERT;v++){
 			for(k=0; k<VERT;k++){
 				printf("   %f   |", x->adj[v][k] );	
 	  		}
-	  		printf("\n______________|______________|______________|______________|______________|______________|\n");	
 	 }}
 
 
 int lerArquivo(Graph x) {
     FILE *fp;
- 	double d[(VERT * VERT)/2];
+ 	double d[VERT * VERT];
     int i=0;
     int j;
     int k=0;
@@ -128,7 +125,6 @@ int lerArquivo(Graph x) {
     }
     while (fgets(str, MAXCHAR, fp) != NULL){
 	sscanf(str, "%lf", &d[i]);
-	printf("%f\n", d[i]);
 	i++;
 	}
 	for(i=0;i<VERT;i++){
@@ -167,7 +163,7 @@ void op2(Graph x){
 		  proximo = j;
 		  
 	 	for(j=verticeVizinho(x,proximo,anterior);y!=proximo && i!=verticeVizinho(x,proximo,anterior) ;j=verticeVizinho(x,proximo,anterior)){
-		 	 printf("trocando  %d:%d por %d:%d anterior =%d \n", i,vizinho,j,proximo,anterior );
+			   printf("Mudando as arestas de %d:%d para %d:%d anterior =%d \n", i,vizinho,j,proximo,anterior  );
 			  if(proximo>j){
 				  x->adj[proximo][j]=0;
 			  }else{
@@ -211,7 +207,7 @@ void op2(Graph x){
 		  	  }
 			  }
 			  
-			  mostrarGrafo(x);
+			  //mostrarGrafo(x);
 			  anterior = proximo;
 			  proximo = j;
 		 }
@@ -240,7 +236,7 @@ void navegar(Graph x){
 		  anterior = proximo;
 		  proximo = j;
 	 	for(j=verticeVizinho(x,proximo,anterior);y!=proximo && i!=verticeVizinho(x,proximo,anterior) ;j=verticeVizinho(x,proximo,anterior)){
-		 	 printf("navegando de  %d:%d para %d:%d anterior =%d \n", i,vizinho,j,proximo,anterior );
+		 	 printf("E possivel mudar as arestas de %d:%d para %d:%d anterior =%d \n", i,vizinho,j,proximo,anterior  );
 			  anterior = proximo;
 			  proximo = j;
 			  
@@ -334,14 +330,8 @@ void vizinhoMaisProximo(Graph x){
 			}
 		}while(i!=y);
 		
-		for(i=0; i<VERT;i++){
-			for(j=0; j<VERT;j++){
-				printf("%f      ", x->adj[i][j] );	
-	  		}
-	  		printf("\n\n");	
-		}
 	}
-void createTxt(char v1[][MAX], char v2[][MAX], double w[], int size){
+void createTxt(char **v1, char **v2, double w[], int size){
 	FILE *fp;
 	fp = fopen("example.txt", "w");
 	char buffer[2*MAX];
@@ -351,27 +341,42 @@ void createTxt(char v1[][MAX], char v2[][MAX], double w[], int size){
 			strcat(buffer, v2[i]);
        		fprintf (fp, "%s %s %s %f\n", v1[i], v2[i], buffer, w[i]);
    	}
+   	printf("\n\n\n arquio criado \n\n\n");
 	fclose(fp);
 }
 
+static char **criarString( int r, int c) { 
+   char **m = malloc( r * sizeof (char *));
+   int i;
+   for ( i = 0; i < r; ++i) 
+   	   m[i] = malloc( c * sizeof (char));
+      	
+   return m;
+}
+
 void gerarArquivo(Graph x){
+	
 	double vetor[VERT];
-	char vetor1[VERT][MAX];
-	char vetor2[VERT][MAX];
-	int i,j;
+	char **vetor1=criarString(VERT,MAX);
+	char **vetor2=criarString(VERT,MAX);
+	char **vetor3=criarString(VERT,MAX);
 	int k=0;
-	for(i=0; i<VERT;i++)
+	int i,j;
+	for(i=0; i<VERT;i++){
+		printf("nome do vertices %d:", i);
+		scanf(" %s", vetor3[i]);
+			}
+	for(i=0; i<VERT;i++){
 	for(j=i+1; j<VERT;j++){
 		if(x->adj[j][i]==1){
-			printf("nome do vertices %d:", i);
-			scanf("%s", vetor1[k]);
-			printf("nome do vertices %d:", j);
-			scanf("%s", vetor2[k]);
+			vetor1[k]=vetor3[i];
+			vetor2[k]=vetor3[j];
 			vetor[k]=x->adj[i][j];
 			k++;
-		}
+		
+		}}
 	}
-		createTxt(vetor1, vetor2, vetor, x->V);
+		createTxt(vetor1, vetor2, vetor, x->A);
 
 }
 
@@ -379,11 +384,12 @@ int main()
 {	
 	Graph grafo = GRAPHinit(VERT);
 	lerArquivo(grafo);
+	//mostrarGrafo(grafo);
 	//inserirBack(grafo);
 	vizinhoMaisProximo(grafo);
 	op2(grafo);
 	navegar(grafo);
-
+	
 	gerarArquivo(grafo);
 	int i;
 	for (i=0;i<VERT;i++){
