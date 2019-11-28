@@ -11,6 +11,7 @@ Write your code in this editor and press "Run" button to compile and execute it.
 #include <String.h>
 #define VERT 6
 #define MAX 10
+#define MAXCHAR 1000
 struct graph {
    int V; 
    int A; 
@@ -58,16 +59,16 @@ Graph GRAPHinit( int V) {
    return G;
 }
 
-void inserirBack(Graph x){
-	/*
-	ordem:
-	->terra
-	->titan
-	->Mimas
-	->Io
-	->Callisto
-	->Ganymede
-	*/
+/*void inserirBack(Graph x){
+	//antigo metodo de inserção
+	//ordem:
+	//->terra
+	//->titan
+	//->Mimas
+	//->Io
+	//->Callisto
+	//->Ganymede
+	
 	x->adj[0][1]=8.1;
 	x->adj[0][2]=8.2;
 	x->adj[0][3]=3.6;
@@ -85,7 +86,7 @@ void inserirBack(Graph x){
 	x->adj[4][5]=1.5;	
 
 	
-}
+}*/
 double somar(Graph x){
 	int j,i;
 	double soma=0;
@@ -125,6 +126,35 @@ void mostrarGrafo(Graph x){
 	  		printf("\n______________|______________|______________|______________|______________|______________|\n");	
 	 }}
 
+
+int lerArquivo(Graph x) {
+    FILE *fp;
+ 	double d[(VERT * VERT)/2];
+    int i=0;
+    int j;
+    int k=0;
+	char str[MAXCHAR];
+    char* filename = "bancoDados.txt";
+ 
+    fp = fopen(filename, "r");
+    if (fp == NULL){
+        printf("Could not open file %s",filename);
+        return 1;
+    }
+    while (fgets(str, MAXCHAR, fp) != NULL){
+	sscanf(str, "%lf", &d[i]);
+	printf("%f\n", d[i]);
+	i++;
+	}
+	for(i=0;i<VERT;i++){
+		for(j=i+1;j<VERT;j++){
+			x->adj[i][j] = d[k];
+			k++;
+		}
+	}
+    fclose(fp);
+    return 0;
+}
 
 void op2(Graph x){
 	int i,j;
@@ -363,12 +393,12 @@ void gerarArquivo(Graph x){
 int main()
 {	
 	Graph grafo = GRAPHinit(VERT);
-
-	inserirBack(grafo);
-		
+	lerArquivo(grafo);
+	//inserirBack(grafo);
 	vizinhoMaisProximo(grafo);
 	op2(grafo);
 	navegar(grafo);
+
 	gerarArquivo(grafo);
 	int i;
 	for (i=0;i<VERT;i++){
