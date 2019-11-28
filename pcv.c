@@ -214,7 +214,6 @@ void navegar(Graph x){
 	int y = 0;
 	i=y;
 	j=y;
-	double soma=somar(x);
 	Graph aux;
 	aux=x;
 
