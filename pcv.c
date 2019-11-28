@@ -35,21 +35,6 @@ static double **MATRIXint( int r, int c, int val) {
    return m;
 }
 
-void GRAPHinsertArc( Graph G, int v, int w) { 
-   if (G->adj[v][w] == 0) {
-      G->adj[v][w] =1; 
-      G->A++;
-   }
-}
-
-void GRAPHremoveArc( Graph G, int v, int w) { 
-   if (G->adj[v][w] == 1) {
-      G->adj[v][w] =0; 
-      G->A--;
-   }
-}
-
-
 Graph GRAPHinit( int V) { 
    Graph G = malloc( sizeof *G);
    G->V = V; 
