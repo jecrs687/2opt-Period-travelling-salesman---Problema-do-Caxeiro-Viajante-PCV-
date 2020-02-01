@@ -16,3 +16,5 @@ in this repository, the problem is solved, but it need:
    </ul>
 One of define is the quantity of cities. When the program run you can write the cities names. 
 The Java file is just generating a visual graph
+
+This is one project for school subject 'graph theory and application' 
